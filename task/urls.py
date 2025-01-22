@@ -5,4 +5,5 @@ urlpatterns = [
     path('manager-dashboard/', manager_dashboard),
     path('user-dashboard/', user_dashboard),
     path('test/', test),
+    path('create-task/', create_task),
 ]

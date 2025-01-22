@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Form</title>
+    <link rel="stylesheet" href="/static/CSS/style.css">
+    {% comment %} <link rel="stylesheet" href="{% static "CSS/output.css" %}"> {% endcomment %}
+</head>
+<body>
+    <main>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <label for="">Title</label>
+            <input type="text" name="title">
+            <label for="">Number</label>
+            <input type="number" name="no">
+            <button type="submit">Submit</button>
+        </form>
+    </main>
+</body>
+</html>
