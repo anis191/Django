@@ -1,51 +1,18 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Page</title>
-    <link rel="stylesheet" href="{% static "CSS/output.css" %}">
-    {% comment %} <link rel="stylesheet" href="{% static "CSS/style.css" %}"> {% endcomment %}
+    <title>Document</title>
 </head>
 <body>
-    <header>
-        <h1 class="text-3xl m-4 text-center">This is a test page</h1>
-    </header>
-    <main id="main" class="max-w-full">
-        <h2 class="font-bold text-center underline p-7">add all divs</h2>
-        <section class="max-w-[1170px] mx-auto bg-gray-100 m-4 p-4 grid grid-cols-3 gap-4">
-            {% comment %} add all divs {% endcomment %}
-             <div class="bg-white p-4 shadow-lg rounded-md">
-                <p>Name: {{name}}</p>
-                <p>Age: {{age}}</p>
-                <p>Address: {{address}}</p>
-                <p>All CGPA: {{cgpa}}</p>
-                <p>isTrue? - {{isTrue}}</p>
-             </div>
-             <div class="bg-white p-4 shadow-lg rounded-md">
-                {% for val in cgpa %}
-                    <h1>cgpa = {{val}}</h1>
-                {% endfor %}
-             </div>
-             <div class="bg-white p-4 shadow-lg rounded-md">
-                {% for val in cgpa %}
-                    {% if val >= 3.00 %}
-                        <h1>cgpa: {{val}}</h1>
-                    {% elif val == 2.00 %}
-                        <h1>cgpa: {{val}}</h1>
-                    {% else %}
-                        <h1>Not matching </h1>
-                    {% endif %}
-                {% endfor %}
-             </div>
+    <main>
+        <section style="margin:30px;">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+            </form>    
         </section>
-        <div class="flex justify-center">
-            <button class="px-10 py-5 my-3 mx-auto bg-green-600 text-white text-xl shadow-md text-center">Add a card</button>
-         </div>
     </main>
-
-    <script src="{% static "JS/script.js" %}"></script>
 </body>
 </html>
