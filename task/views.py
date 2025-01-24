@@ -29,3 +29,8 @@ def create_task(request):
         "form" : form
     }
     return render(request, "task_form.html", context)
+
+def view_task(request):
+    # retrive all data from "Task" model
+    tasks = Task.objects.all()
+    return render(request, "show_task.html", {"tasks" : tasks})
