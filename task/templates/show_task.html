@@ -6,11 +6,28 @@
     <title>Show all tasks</title>
 </head>
 <body>
-    <main>
-        {{tasks}}
+    <main style="display:flex">
         <ul>
             {% for task in tasks %}
                 <li>{{task.status}}</li>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for task in pending_tasks %}
+                <li>{{task.title}}</li>
+                <p>{{task.status}}</p>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for task in todays_tasks %}
+                <li>{{task.title}}</li>
+                <p>{{task.due_date}}</p>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for task in except_low %}
+                <li>{{task.task}}</li>
+                <p>{{task.priority}}</p>
             {% endfor %}
         </ul>
     </main>
