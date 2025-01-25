@@ -7,11 +7,17 @@
 </head>
 <body>
     <main style="display:flex">
-        <ul>
-            {% for task in tasks %}
-                <li>{{task.status}}</li>
+        <ol>
+            {% for emp in tasks %}
+                <li>{{emp.name}}
+                    {% for task in emp.task_set.all %}
+                        <ul>
+                            <li>{{task.title}}</li>
+                        </ul>
+                    {% endfor %}
+                </li>
             {% endfor %}
-        </ul>
+        </ol>
         <ul>
             {% for task in pending_tasks %}
                 <li>{{task.title}}</li>
