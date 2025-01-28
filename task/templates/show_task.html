@@ -8,6 +8,11 @@
 <body>
     <main style="display:flex">
         <ol>
+            {% for project in task_per_project %}
+                <li>{{project.name}} = {{project.total}}</li>
+            {% endfor %}
+        </ol>
+        <ol>
             {% for emp in tasks %}
                 <li>{{emp.name}}
                     {% for task in emp.task_set.all %}
@@ -36,6 +41,10 @@
                 <p>{{task.priority}}</p>
             {% endfor %}
         </ul>
+        <p>
+            {{ count_project }}
+            {{count_employee.total}}
+        </p>
     </main>
 </body>
 </html>

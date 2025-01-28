@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from task.forms import *
 from task.models import *
 from datetime import date
+from django.db.models import Q, Avg, Count, Min, Max, Sum
 
 # Create your views here.
 
@@ -38,7 +39,10 @@ def view_task(request):
     # tasks = Task.objects.select_related('project').all()
     # tasks = Project.objects.prefetch_related('task_set').all()
     # tasks = Task.objects.prefetch_related('assign_to').all()
-    tasks = Employee.objects.prefetch_related('task_set').all()
+    # tasks = Employee.objects.prefetch_related('task_set').all()
+    # count_project = Project.objects.aggregate(total = Count('name'))
+    # count_employee = Employee.objects.aggregate(total = Count('id'))
+    task_per_project = Project.objects.annotate(total = Count('task')).order_by('total')
     # Only pending task:
     pending_tasks = Task.objects.filter(status = "PENDING")
     # Only tasks which due_date is today:
@@ -46,7 +50,10 @@ def view_task(request):
     # Only those tasks whose priority is not low:
     except_low = TaskDetail.objects.exclude(priority = 'L')
     context = {
-        "tasks" : tasks,
+        "task_per_project" : task_per_project,
+        # "count_project" : count_project,
+        # "count_employee" : count_employee,
+        # "tasks" : tasks,
         #"pending_tasks" : pending_tasks,
         #"todays_tasks" : todays_tasks,
         #"except_low" : except_low
