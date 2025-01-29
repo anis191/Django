@@ -42,7 +42,8 @@ def view_task(request):
     # tasks = Employee.objects.prefetch_related('task_set').all()
     # count_project = Project.objects.aggregate(total = Count('name'))
     # count_employee = Employee.objects.aggregate(total = Count('id'))
-    task_per_project = Project.objects.annotate(total = Count('task')).order_by('total')
+    # task_per_project = Project.objects.annotate(total = Count('task')).order_by('total')
+    projects = Project.objects.prefetch_related('task_set').all()
     # Only pending task:
     pending_tasks = Task.objects.filter(status = "PENDING")
     # Only tasks which due_date is today:
@@ -50,12 +51,12 @@ def view_task(request):
     # Only those tasks whose priority is not low:
     except_low = TaskDetail.objects.exclude(priority = 'L')
     context = {
-        "task_per_project" : task_per_project,
+        # "task_per_project" : task_per_project,
         # "count_project" : count_project,
         # "count_employee" : count_employee,
-        # "tasks" : tasks,
+        "projects" : projects,
         #"pending_tasks" : pending_tasks,
-        #"todays_tasks" : todays_tasks,
+        "todays_tasks" : todays_tasks,
         #"except_low" : except_low
     }
     return render(request, "show_task.html", context)

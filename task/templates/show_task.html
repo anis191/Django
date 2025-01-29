@@ -8,21 +8,28 @@
 <body>
     <main style="display:flex">
         <ol>
-            {% for project in task_per_project %}
-                <li>{{project.name}} = {{project.total}}</li>
-            {% endfor %}
-        </ol>
-        <ol>
-            {% for emp in tasks %}
-                <li>{{emp.name}}
-                    {% for task in emp.task_set.all %}
-                        <ul>
+            {% for project in projects %}
+                <li>
+                    {{project}}
+                    <ul>
+                        {% for task in project.task_set.all %}
                             <li>{{task.title}}</li>
-                        </ul>
-                    {% endfor %}
+                        {% endfor %}    
+                    </ul>
                 </li>
             {% endfor %}
         </ol>
+        {% comment %} <ol> {% endcomment %}
+            {% comment %} {% for emp in tasks %} {% endcomment %}
+                {% comment %} <li>{{emp.name}} {% endcomment %}
+                    {% comment %} {% for task in emp.task_set.all %} {% endcomment %}
+                        {% comment %} <ul> {% endcomment %}
+                            {% comment %} <li>{{task.title}}</li> {% endcomment %}
+                        {% comment %} </ul> {% endcomment %}
+                    {% comment %} {% endfor %} {% endcomment %}
+                {% comment %} </li> {% endcomment %}
+            {% comment %} {% endfor %} {% endcomment %}
+        {% comment %} </ol> {% endcomment %}
         <ul>
             {% for task in pending_tasks %}
                 <li>{{task.title}}</li>
