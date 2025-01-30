@@ -29,11 +29,12 @@
             <!-- top part -->
             <section class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4 mb-4">
                 <!-- total task card-->
+                <a href="{% url "manager-dashboard" %}?type=all">
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <h1 class="text-md text-gray-600 font-semibold">TOTAL TASK</h1>
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="font-bold text-3xl">3</p>
+                            <p class="font-bold text-3xl">{{counts.total_task}}</p>
                             <p class="text-sm text-gray-600 font-semibold">111 last month</p>    
                         </div>
                         <div class="p-3 rounded-full bg-blue-100">
@@ -43,13 +44,15 @@
                         </div>
                     </div>
                 </div>
+                </a>
 
                 <!-- Completed Task Card -->
+                 <a href="{% url "manager-dashboard" %}?type=completed">
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <h1 class="text-md text-gray-600 font-semibold">COMPLETED TASK</h1>
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="font-bold text-3xl">1</p>
+                            <p class="font-bold text-3xl">{{counts.completed_task}}</p>
                             <p class="text-sm text-gray-600 font-semibold">111 last month</p>    
                         </div>
                         <div class="p-3 rounded-full bg-green-100">
@@ -59,13 +62,15 @@
                         </div>
                     </div>
                 </div>
+                </a>
 
-                <!-- Total Task Card-->
+                <!-- In-Progress Task Card-->
+                <a href="{% url "manager-dashboard" %}?type=in-progress">
                 <div class="bg-white rounded-xl shadow-md p-6">
-                    <h1 class="text-md text-gray-600 font-semibold">TOTAL TASK</h1>
+                    <h1 class="text-md text-gray-600 font-semibold">TASK IN PROGRESS</h1>
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="font-bold text-3xl">1</p>
+                            <p class="font-bold text-3xl">{{counts.InProgress_task}}</p>
                             <p class="text-sm text-gray-600 font-semibold">111 last month</p>    
                         </div>
                         <div class="p-3 rounded-full bg-yellow-100">
@@ -75,13 +80,15 @@
                         </div>
                     </div>
                 </div>
+                </a>
 
                 <!-- ToDos Card -->
+                <a href="{% url "manager-dashboard" %}?type=pending">
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <h1 class="text-md text-gray-600 font-semibold">TODOS</h1>
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="font-bold text-3xl">1</p>
+                            <p class="font-bold text-3xl">{{counts.pending_task}}</p>
                             <p class="text-sm text-gray-600 font-semibold">111 last month</p>    
                         </div>
                         <div class="p-3 rounded-full bg-purple-100">
@@ -91,9 +98,17 @@
                         </div>
                     </div>
                 </div>
+                </a>
             </section>
 
             {% comment %}--------- Bottom part(uniq part) ---------- {% endcomment %}
+            {% if messages %}
+            {% for message in messages %}
+                <div class="px-4 py-2 {% if message.tags == 'success' %}bg-green-500{% endif %}">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+            {% endif %}
              {% block tasks %}
              
              {% endblock tasks %}
