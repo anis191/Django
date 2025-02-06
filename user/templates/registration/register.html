@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static "CSS/output.css" %}">
+</head>
+<body class="bg-gray-100">
+    <h1 class="text-3xl font-serif text-blue-600 text-center py-3">Registration Form</h1>
+    {% comment %} show non-field errors {% endcomment %}
+    <div>
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                {{error}}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <section class="bg-white sm:max-w-[90%] lg:max-w-[60%] rounded shadow-lg p-5 mx-auto">
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+            <p>
+                <label for="{{field.id_for_label}}">{{field.label}}</label>
+                {{field}}
+
+                {% if field.errors %}
+                    <ul>
+                        {% for error in field.errors %}
+                            <li>{{error}}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </p>
+        {% endfor %}
+        <div class="flex justify-center pt-3">
+        <button type="submit" class=" bg-green-500 text-white font-semibold p-2">Sign Up</button>
+        </div>
+    </form>
+    </section>
+</body>
+</html>
