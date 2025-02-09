@@ -65,6 +65,7 @@ class Project(models.Model):
     def __str__(self):
         return self.name 
 
+'''
 # Create a Signal(post_save):
 # @receiver(post_save, sender=Task)
 # def notify_task_creation(sender, instance, created, **kwargs):
@@ -94,3 +95,4 @@ def notify_employees_on_task_creation(sender, instance, action, **kwargs):
 # def delete_associate_details(sender, instance, **kwargs):
     # if instance.details:
         # instance.details.delete()
+'''

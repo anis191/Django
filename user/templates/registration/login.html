@@ -10,18 +10,16 @@
 <body class="bg-gray-100">
     <h1 class="text-3xl font-serif text-blue-600 text-center py-3">Sign In</h1>
     <section class="bg-white sm:max-w-[90%] lg:max-w-[60%] rounded shadow-lg p-5 mx-auto">
+    {% if messages %}
+        {% for message in messages %}
+            <p class="p-5 border-green-500 text-green-600 text-center">{{message}}</p>
+        {% endfor %}
+    {% endif %}
     <form action="" method="POST">
         {% csrf_token %}
-        <div class="flex flex-col align-center gap-5">
-            <label for="username">Username:
-                <input type="text" placeholder="Enter your username" name="username" class="border-2">
-            </label>
-            <label for="password">Password:
-                <input type="text" placeholder="Enter your password" name="password" class="border-2">
-            </label>
-            <div class="flex justify-center pt-3">
-                <button type="submit" class=" bg-green-500 text-white font-semibold p-2">Sign In</button>
-            </div>
+        {{form}}
+        <div class="flex justify-center pt-3">
+            <button type="submit" class=" bg-green-500 text-white font-semibold p-2">Sign In</button>
         </div>
     </form>
     </section>

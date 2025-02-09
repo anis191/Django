@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 import re
 from task.forms import StyleFormMixin
+from django.contrib.auth.forms import AuthenticationForm
 
 '''
 class RegisterForm(UserCreationForm):
@@ -64,3 +65,6 @@ class CustomRegisterForm(StyleFormMixin, forms.ModelForm):
         
         return cleaned_data
 
+class LoginForm(StyleFormMixin, AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args,**kwargs)
