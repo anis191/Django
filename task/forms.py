@@ -29,6 +29,10 @@ class StyleFormMixin:
                 field.widget.attrs.update({
                     'class' : self.common_class
                 })
+            elif isinstance(field.widget, forms.ModelChoiceField):
+                field.widget.attrs.update({
+                    'class' : f"{self.common_class} w-full",
+                })
             else:
                 field.widget.attrs.update({
                     'class' : self.common_class

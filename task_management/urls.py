@@ -17,11 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from debug_toolbar.toolbar import debug_toolbar_urls
-from core.views import home
+from core.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name="home"),
     path('tasks/', include("task.urls")),
     path('users/', include("user.urls")),
+    path('no-permission/', no_permission, name="no-permission")
 ] + debug_toolbar_urls()

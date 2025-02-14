@@ -5,9 +5,17 @@ from task.models import *
 from datetime import date
 from django.db.models import Q, Avg, Count, Min, Max, Sum
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 
 # Create your views here.
+#Test user 'manager' or not?
+def is_manager(user):
+    return user.groups.filter(name='Manager').exists()
 
+def is_employee(user):
+    return user.groups.filter(name='Employee').exists()
+
+@user_passes_test(is_manager, login_url='no-permission')
 def manager_dashboard(request):
     type = request.GET.get('type')
     '''
@@ -38,15 +46,13 @@ def manager_dashboard(request):
     }
     return render(request, "dashboard/manager-dashboard.html", context)
 
+@user_passes_test(is_employee)
 def user_dashboard(request):
     return render(request, "dashboard/user-dashboard.html")
 
-def test(request):
-    context = {
-        "form" : TestForm(),
-    }
-    return render(request, "test.html", context)
-
+#admin and manager both are create a task:
+@login_required
+@permission_required("task.add_task", login_url='no-permission')
 def create_task(request):
     task_form = TaskModelForm()  # For 'GET'
     task_detail_form = TaskDetailModelForm()
@@ -68,6 +74,8 @@ def create_task(request):
     }
     return render(request, "task_form.html", context)
 
+@login_required
+@permission_required("task.change_task", login_url='no-permission')
 def update_task(request, id):
     task = Task.objects.get(id=id)
     task_form = TaskModelForm(instance=task)  # For 'GET'
@@ -91,6 +99,8 @@ def update_task(request, id):
     }
     return render(request, "task_form.html", context)
 
+@login_required
+@permission_required("task.delete_task", login_url='no-permission')
 def delete_task(request, id):
     # Alaway use "POST" method for delete operation:
     if request.method == "POST":
@@ -99,6 +109,8 @@ def delete_task(request, id):
         messages.success(request ,"Task Delete Successfully!")
         return redirect('manager-dashboard')
 
+@login_required
+@permission_required("task.view_task", login_url='no-permission')
 def view_task(request):
     context = {
     }
