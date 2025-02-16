@@ -1,13 +1,7 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static "CSS/output.css" %}">
-</head>
-<body class="bg-gray-100">
+{% extends "base.html" %}
+
+{% block content %}
+<section class="bg-gray-100">
     <h1 class="text-3xl font-serif text-blue-600 text-center py-3">Sign In</h1>
     <section class="bg-white sm:max-w-[90%] lg:max-w-[60%] rounded shadow-lg p-5 mx-auto">
     {% if messages %}
@@ -23,5 +17,5 @@
         </div>
     </form>
     </section>
-</body>
-</html>
+</section>
+{% endblock content %}

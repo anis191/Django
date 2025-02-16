@@ -21,7 +21,7 @@
                 {% endif %}
             </header>
             <main>
-                <form action="" method="POST" class="flex flex-col gap-2">
+                <form action="" method="POST" class="flex flex-col gap-2" enctype='multipart/form-data'>
                     {% csrf_token %}
                     {{ task_form.as_p }}
                     {{ task_detail_form.as_p }}

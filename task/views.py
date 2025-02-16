@@ -60,7 +60,7 @@ def create_task(request):
     # For 'POST':
     if request.method == 'POST':
         task_form = TaskModelForm(request.POST) # For 'GET'
-        task_detail_form = TaskDetailModelForm(request.POST)
+        task_detail_form = TaskDetailModelForm(request.POST, request.FILES)
         if task_form.is_valid() and task_detail_form.is_valid():
             task = task_form.save()
             task_detail = task_detail_form.save(commit=False)
@@ -115,3 +115,15 @@ def view_task(request):
     context = {
     }
     return render(request, "show_task.html", context)
+
+@login_required
+@permission_required("task.view_task", login_url='no-permission')
+def task_details(request, task_id):
+    task = Task.objects.get(id = task_id)
+    status_choices = STATUS_CHOICES
+    if request.method == "POST":
+        selected_data = request.POST.get('task_status')
+        task.status = selected_data
+        task.save()
+        return redirect('task-details', task.id)
+    return render(request, 'task_details.html', {"task" : task, "status_choices": status_choices})

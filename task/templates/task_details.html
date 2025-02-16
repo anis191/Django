@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}
+Task - {{task.title}}
+{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12 max-w-7xl">
+  <h1 class="text-4xl font-semibold mb-8">{{task.title}}</h1>
+
+  <!-- Navigation Tabs -->
+  <div class="flex gap-6 mb-10 border-b pb-4">
+    <button
+      class="px-6 py-3 bg-blue-100 text-blue-700 rounded-t-lg flex items-center gap-3 font-semibold hover:bg-blue-200 transition duration-200"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+        ></path>
+      </svg>
+      Task Detail
+    </button>
+    <div class="flex items-center gap-3">
+       <form method="POST">
+        {% csrf_token %}
+          <select
+              name="task_status"
+              id="task_status"
+              class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              {% for value, label in status_choices %}
+                <option value="{{value}}">{{label}}</option>
+              {% endfor %}
+          </select>
+          <button
+              class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              type="submit">Change Status
+          </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+    <!-- Main Content -->
+    <div class="lg:col-span-2">
+      <div class="bg-white p-8 rounded-lg shadow-lg">
+        <!-- Status Tags -->
+        <div class="flex gap-4 mb-6">
+          <span
+            class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
+            >{{task.details.get_priority_display}} PRIORITY</span
+          >
+          <span
+            class="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium"
+            >{{task.status}}</span
+          >
+        </div>
+
+        <!-- Creation Date -->
+        <div class="text-gray-600 mb-6">Created At: {{task.created_at}}</div>
+
+        <!-- Task Team -->
+        <div class="mb-10">
+          <h2 class="text-xl font-semibold mb-5">TASK TEAM</h2>
+          <div class="space-y-5">
+            {% for emp in task.assign_to.all %}
+            <div class="flex items-center gap-5">
+              <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white text-lg font-semibold">
+                {{emp.first_name|slice:':1'}}
+              </div>
+              <div>
+                <div class="font-semibold text-lg">{{emp.first_name}}</div>
+                <div class="text-gray-500 text-sm">{{emp.groups.first.name|default:"No Role"}}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="flex gap-3">
+            <a href="{% url "update-task" task.id %}">
+              <button class="px-6 py-3 mt-6 bg-green-500 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500" type="submit">Edit</button>
+            </a>
+            <form action="{% url "delete-task" task.id %}" method='POST'>
+              {% csrf_token %}
+              <button class="px-6 py-3 mt-6 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              type="submit">Delete Task</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="lg:col-span-1">
+      <!-- Task Description -->
+      <div class="bg-white p-8 rounded-lg shadow-lg mb-8">
+        <h2 class="text-xl font-semibold mb-5">TASK DESCRIPTION</h2>
+        <p class="text-gray-600 text-sm">
+          {{task.description}}
+        </p>
+      </div>
+
+      <!-- Assets -->
+      <div class="bg-white p-8 rounded-lg shadow-lg">
+        <h2 class="text-xl font-semibold mb-5">ASSETS</h2>
+        <div class="space-y-5">
+          <img
+            src="{{task.details.asset.url}}"
+            alt="Task Manager App Screenshot 1"
+            class="w-full rounded-lg"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

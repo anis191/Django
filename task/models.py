@@ -2,14 +2,15 @@ from django.db import models
 from django.db.models.signals import post_save, pre_save, m2m_changed, post_delete
 from django.dispatch import receiver
 from django.core.mail import send_mail
+from django.contrib.auth.models import User
 
 # Employee model(table)
-class Employee(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-
-    def __str__(self):
-        return self.name
+# class Employee(models.Model):
+    # name = models.CharField(max_length=100)
+    # email = models.EmailField(unique=True)
+# 
+    # def __str__(self):
+        # return self.name
 
 # Task model(table)
 STATUS_CHOICES = [
@@ -23,14 +24,12 @@ class Task(models.Model):
         on_delete=models.CASCADE,
         default=1
     )
-    assign_to = models.ManyToManyField(
-        Employee
-    )
+    assign_to = models.ManyToManyField(User)
     title = models.CharField(max_length=255)
     description = models.TextField()
     due_date = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
-    is_completed = models.BooleanField(default=False)
+    # is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -50,6 +49,7 @@ class TaskDetail(models.Model):
     )
     task = models.OneToOneField(Task, on_delete=models.CASCADE, related_name='details')
     # assign_to = models.CharField(max_length=100)
+    asset = models.ImageField(upload_to='task_asset', blank=True, null=True, default="task_asset/default-image.jpg")
     priority = models.CharField(max_length=1, choices=PRIORITY_OPTION, default=LOW)
     notes = models.TextField(null=True, blank=True)
 
