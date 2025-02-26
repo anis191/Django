@@ -11,7 +11,7 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic.base import ContextMixin
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView, UpdateView
 
 # CBV view practice:
 class Greetings(View):
@@ -132,6 +132,7 @@ class CreateTask(ContextMixin,LoginRequiredMixin,PermissionRequiredMixin,View):
             return render(request, self.template_name, context)
             # return redirect('create-task')
 
+'''
 @login_required
 @permission_required("task.change_task", login_url='no-permission')
 def update_task(request, id):
@@ -156,6 +157,34 @@ def update_task(request, id):
         "task_detail_form" : task_detail_form
     }
     return render(request, "task_form.html", context)
+'''
+class UpdateTask(UpdateView):
+    model = Task
+    form_class = TaskModelForm
+    template_name = 'task_form.html'
+    context_object_name = 'task'
+    pk_url_kwarg = 'id'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['task_form'] = self.get_form()
+        if hasattr(self.object, 'details') and self.object.details:
+            context['task_detail_form'] = TaskDetailModelForm(instance=self.object.details)
+        else:
+            context['task_detail_form'] = TaskDetailModelForm()
+        return context
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        task_form = TaskModelForm(request.POST, instance=self.object)
+        task_detail_form = TaskDetailModelForm(request.POST,request.FILES,instance=getattr(self.object, 'details', None))
+        if task_form.is_valid() and task_detail_form.is_valid():
+            task = task_form.save()
+            task_detail = task_detail_form.save(commit=False)
+            task_detail.task = task
+            task_detail.save()
+            messages.success(request ,"Task Update Successfully!")
+            return redirect('update-task', self.object.id)
+        return redirect('update-task', self.object.id)
 
 @login_required
 @permission_required("task.delete_task", login_url='no-permission')
@@ -182,14 +211,35 @@ class ViewTask(ListView):
         return queryset
     
 
-@login_required
-@permission_required("task.view_task", login_url='no-permission')
-def task_details(request, task_id):
-    task = Task.objects.get(id = task_id)
-    status_choices = STATUS_CHOICES
-    if request.method == "POST":
+# @login_required
+# @permission_required("task.view_task", login_url='no-permission')
+# def task_details(request, task_id):
+    # task = Task.objects.get(id = task_id)
+    # status_choices = STATUS_CHOICES
+    # if request.method == "POST":
+        # selected_data = request.POST.get('task_status')
+        # task.status = selected_data
+        # task.save()
+        # return redirect('task-details', task.id)
+    # return render(request, 'task_details.html', {"task" : task, "status_choices": status_choices})
+
+task_detail_decorators = [login_required, permission_required("task.view_task",login_url='no-permission')]
+@method_decorator(task_detail_decorators, name="dispatch")
+class TaskDetails(DetailView):
+    model = Task
+    template_name = 'task_details.html'
+    context_object_name = 'task'
+    pk_url_kwarg = 'task_id'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status_choices'] = STATUS_CHOICES
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
         selected_data = request.POST.get('task_status')
         task.status = selected_data
         task.save()
         return redirect('task-details', task.id)
-    return render(request, 'task_details.html', {"task" : task, "status_choices": status_choices})
+    
