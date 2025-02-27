@@ -130,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Dhaka'
 
 USE_I18N = True
 
@@ -161,3 +161,6 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Your email password (Use 
 
 # For user activation signal activation_url:
 FRONTEND_URL = 'http://127.0.0.1:8000'
+LOGIN_URL = '/user/sign-in/'
+LOGIN_REDIRECT_URL = '/users/admin/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
