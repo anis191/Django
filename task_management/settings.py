@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+AUTH_USER_MODEL = 'user.CustomUser'
 
 # Application definition
 

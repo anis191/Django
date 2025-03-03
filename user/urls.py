@@ -18,4 +18,5 @@ urlpatterns = [
     path('passwd-change-done/', PasswordChangeDoneView.as_view(template_name = 'accounts/password_change_done.html'), name="password_change_done"),
     path('passwd-reset/', CustomPasswordResetView.as_view(), name="password_reset"),
     path('passwd-reset-confirm/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('edit-profile/', EditProfileView.as_view(), name='edit-profile'),
 ]
