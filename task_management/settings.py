@@ -162,5 +162,5 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Your email password (Use 
 # For user activation signal activation_url:
 FRONTEND_URL = 'http://127.0.0.1:8000'
 LOGIN_URL = '/user/sign-in/'
-LOGIN_REDIRECT_URL = '/users/admin/dashboard/'
+LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = '/'

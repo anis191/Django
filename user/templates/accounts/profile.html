@@ -25,7 +25,7 @@
         <div class="bg-white shadow-md rounded-lg p-6">
           <div class="flex items-center mb-6">
             <img
-              src="{{profile_image.url}}"
+              src="{% if profile_image and profile_image.url %}{{profile_image.url}}{% else %} https://cdn3.iconfinder.com/data/icons/avatars-flat/33/man_5-512.png {% endif %}"
               alt="User Avatar"
               class="w-24 h-24 rounded-full object-cover mr-6"
             />

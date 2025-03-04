@@ -9,17 +9,25 @@ from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Prefetch
-from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView
-from django.views.generic import TemplateView, UpdateView
+from django.views import View
+from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView, LogoutView
+from django.views.generic import TemplateView, UpdateView, FormView, ListView
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import UserPassesTestMixin
 User = get_user_model()
 
 #Test for the user is 'admin' or not?
 def is_admin(user):
     return user.groups.filter(name='Admin').exists()
 
+class AdminCheckMixin(UserPassesTestMixin):
+    def test_func(self):
+        return is_admin(self.request.user)
+    login_url = 'no-permission'
+
 # Create your views here.
+'''
 def sign_up(request):
     form = CustomRegisterForm
     if request.method == 'POST':
@@ -33,6 +41,23 @@ def sign_up(request):
             messages.success(request, "A confirmation mail sent. Check your email")
             return redirect('sign-in')
     return render(request, "registration/register.html", {"form":form})
+'''
+class SignUpView(View):
+    def get(self,request,*args, **kwargs):
+        form = CustomRegisterForm
+        return render(request, "registration/register.html", {"form":form})
+    
+    def post(self, request, *args, **kwargs):
+        form = CustomRegisterForm(request.POST)
+        if form.is_valid():
+            # print(form.cleaned_data)
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data.get('CreatePassword'))
+            user.is_active = False
+            user.save()
+            messages.success(request, "A confirmation mail has been sent. Check your email")
+            return redirect('sign-in')
+        return render(request, "registration/register.html", {"form":form})
 
 '''
 def sign_in(request):
@@ -59,12 +84,16 @@ class ChangePassword(PasswordChangeView):
     template_name = 'accounts/password_change.html'
     form_class = CustomPasswordChangeForm
 
+'''
 @login_required
 def sign_out(request):
     if request.method == 'POST':
         logout(request)
         return redirect('sign-in')
-
+'''
+class CustomSignOutView(LogoutView):
+    next_page = reverse_lazy('sign-in')
+'''
 def activate_user(request, user_id, token):
     try:
         user = User.objects.get(id=user_id)
@@ -77,7 +106,22 @@ def activate_user(request, user_id, token):
             return HttpResponse("Invalid user id and url's")
     except:
         return HttpResponse('User Not Found!')
+'''
+class ActivateUser(View):
+    def get(self, request,user_id,token, *args, **kwargs):
+        try:
+            user = User.objects.get(id=user_id)
+            # now varify token using build in authenticate function:
+            if default_token_generator.check_token(user, token):
+                user.is_active = True
+                user.save()
+                return redirect('sign-in')
+            else:
+                return HttpResponse("Invalid user id and url's")
+        except:
+            return HttpResponse('User Not Found!')
 
+'''
 @user_passes_test(is_admin, login_url='no-permission')
 def admin_dashboard(request):
     users = User.objects.prefetch_related(
@@ -89,7 +133,24 @@ def admin_dashboard(request):
         else:
             user.group_name = "No Group Assign"
     return render(request, 'admin/dashboard.html', {"users" : users})
+'''
+class AdminDashboardView(AdminCheckMixin, ListView):
+    model = User
+    template_name = 'admin/dashboard.html'
+    context_object_name = 'users'
 
+    def get_queryset(self):
+        users = User.objects.prefetch_related(
+            Prefetch('groups', queryset=Group.objects.all(), to_attr='all_groups')
+        ).all()
+        for user in users:
+            if user.all_groups:
+                user.group_name = user.all_groups[0].name
+            else:
+                user.group_name = "No Group Assign"
+        return users
+
+'''
 @user_passes_test(is_admin, login_url='no-permission')
 def assign_role(request, user_id):
     user = User.objects.get(id = user_id)
@@ -103,7 +164,23 @@ def assign_role(request, user_id):
             messages.success(request, f"User {user.username} has been assigned to the {role.name} role")
             return redirect('admin-dashboard')
     return render(request, 'admin/assign_role.html', {"form" : form})
+'''
+class AssignRoleView(AdminCheckMixin, View):
+    def get(self, request, user_id, *args, **kwargs):
+        user = User.objects.get(id = user_id)
+        form = AssignRoleForm()
+        return render(request, 'admin/assign_role.html', {"form" : form})
+    def post(self, request, user_id, *args, **kwargs):
+        user = User.objects.get(id = user_id)
+        form = AssignRoleForm(request.POST)
+        if form.is_valid():
+            role = form.cleaned_data.get('role')
+            user.groups.clear() #Remove Old Role
+            user.groups.add(role)
+            messages.success(request, f"User {user.username} has been assigned to the {role.name} role")
+            return redirect('admin-dashboard')
 
+'''
 @user_passes_test(is_admin, login_url='no-permission')
 def create_group(request):
     form = CreateGroupForm()
@@ -114,12 +191,32 @@ def create_group(request):
             messages.success(request, f"Group '{group.name}' has been Created")
             return redirect('create-group')
     return render(request, 'admin/create_group.html', {"form" : form})
+'''
+class CreateGroupView(AdminCheckMixin, FormView):
+    template_name = 'admin/create_group.html'
+    form_class = CreateGroupForm
+    success_url = 'create-group'
+
+    def form_valid(self, form):
+        group = form.save()
+        messages.success(self.request, f"Group '{group.name}' has been Created")
+        return super().form_valid(form)
 
 # a view for show all group in a list
+'''
 @user_passes_test(is_admin, login_url='no-permission')
 def group_list(request):
     groups = Group.objects.prefetch_related('permissions__content_type').all()
     return render(request, 'admin/group_list.html', {"groups": groups})
+'''
+class GroupListView(AdminCheckMixin, ListView):
+    model = Group
+    template_name = 'admin/group_list.html'
+    context_object_name = 'groups'
+    
+    def get_queryset(self):
+        return Group.objects.prefetch_related('permissions__content_type').all()
+    
 
 class ProfileView(TemplateView):
     template_name = 'accounts/profile.html'
