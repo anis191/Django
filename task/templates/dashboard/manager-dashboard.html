@@ -20,12 +20,7 @@ Manager Dashboard
             <div class="grid grid-cols-4 p-4">
                 <div class="flex items-center gap-2">
                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>{{task.title}}</span>
-                    {% comment %} <span>[{{task.status}}]</span> {% endcomment %}
-                     {% comment %} <form action="{% url 'update-task' task.id %}" method="POST"> {% endcomment %}
-                        {% comment %} {% csrf_token %} {% endcomment %}
-                        {% comment %} <button type="submit" class="bg-green-500 text-white px-3 py-1">Edit</button> {% endcomment %}
-                     {% comment %} </form> {% endcomment %}
+                    <a href="{% url "task-details" task.id %}"><span>{{task.title}}</span></a>
                      <a href="{% url "update-task" task.id %}">
                         <button type="submit" class="bg-green-500 text-white px-3 py-1">Edit</button>
                     </a>

@@ -1,13 +1,6 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static "CSS/output.css" %}">
-</head>
-<body class="bg-gray-100">
+{% extends "base.html" %}
+{% block content %}
+<section class="bg-gray-100">
     <h1 class="text-3xl font-serif text-blue-600 text-center py-3">Registration Form</h1>
     {% comment %} show non-field errors {% endcomment %}
     <div>
@@ -39,5 +32,5 @@
         </div>
     </form>
     </section>
-</body>
-</html>
+</section>
+{% endblock content %}

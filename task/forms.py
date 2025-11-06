@@ -7,7 +7,7 @@ class StyleFormMixin:
         super().__init__(*args,**kwargs)
         self.apply_style()
     
-    common_class = "border-2 rounded-lg border-gray-300 px-3" 
+    common_class = "border-2 rounded-lg border-gray-300 px-3 py-2" 
     def apply_style(self):
         for field_name, field in self.fields.items():
             if isinstance(field.widget, forms.TextInput):
@@ -29,6 +29,10 @@ class StyleFormMixin:
                 field.widget.attrs.update({
                     'class' : self.common_class
                 })
+            elif isinstance(field.widget, forms.ModelChoiceField):
+                field.widget.attrs.update({
+                    'class' : f"{self.common_class} w-full",
+                })
             else:
                 field.widget.attrs.update({
                     'class' : self.common_class
@@ -38,7 +42,7 @@ class StyleFormMixin:
 class TaskModelForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['title', 'description', 'due_date', 'assign_to']
+        fields = ['title', 'description', 'due_date','assign_to'] #assign_to
         widgets = {
             'due_date' : forms.SelectDateWidget,
             'assign_to' : forms.CheckboxSelectMultiple
@@ -47,4 +51,4 @@ class TaskModelForm(StyleFormMixin, forms.ModelForm):
 class TaskDetailModelForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = TaskDetail
-        fields = ['priority', 'notes']
+        fields = ['priority', 'notes', 'asset']
