@@ -5,19 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Form</title>
-    <link rel="stylesheet" href="/static/CSS/style.css">
+    {% comment %} <link rel="stylesheet" href="/static/CSS/style.css"> {% endcomment %}
     {% comment %} <link rel="stylesheet" href="{% static "CSS/output.css" %}"> {% endcomment %}
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
 </head>
-<body>
-    <main>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <label for="">Title</label>
-            <input type="text" name="title">
-            <label for="">Number</label>
-            <input type="number" name="no">
-            <button type="submit">Submit</button>
-        </form>
-    </main>
+<body class="bg-gray-50">
+    <section class="w-full flex justify-center">
+        <div class="w-[50%] p-4 m-4 shadow-lg bg-white rounded-md">
+            <header>
+                {% if message %}
+                    <p>{{ message }}</p>
+                {% endif %}
+            </header>
+            <main>
+                <form action="" method="POST" class="flex flex-col gap-2">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="bg-rose-500 text-white px-7 py-3 w-1/2 mx-auto rounded-md">Submit</button>
+                </form>
+            </main>    
+        </div>    
+    </section>
 </body>
 </html>
