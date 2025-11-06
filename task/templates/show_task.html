@@ -6,13 +6,52 @@
     <title>Show all tasks</title>
 </head>
 <body>
-    <main>
-        {{tasks}}
+    <main style="display:flex">
+        <ol>
+            {% for project in projects %}
+                <li>
+                    {{project}}
+                    <ul>
+                        {% for task in project.task_set.all %}
+                            <li>{{task.title}}</li>
+                        {% endfor %}    
+                    </ul>
+                </li>
+            {% endfor %}
+        </ol>
+        {% comment %} <ol> {% endcomment %}
+            {% comment %} {% for emp in tasks %} {% endcomment %}
+                {% comment %} <li>{{emp.name}} {% endcomment %}
+                    {% comment %} {% for task in emp.task_set.all %} {% endcomment %}
+                        {% comment %} <ul> {% endcomment %}
+                            {% comment %} <li>{{task.title}}</li> {% endcomment %}
+                        {% comment %} </ul> {% endcomment %}
+                    {% comment %} {% endfor %} {% endcomment %}
+                {% comment %} </li> {% endcomment %}
+            {% comment %} {% endfor %} {% endcomment %}
+        {% comment %} </ol> {% endcomment %}
         <ul>
-            {% for task in tasks %}
-                <li>{{task.status}}</li>
+            {% for task in pending_tasks %}
+                <li>{{task.title}}</li>
+                <p>{{task.status}}</p>
             {% endfor %}
         </ul>
+        <ul>
+            {% for task in todays_tasks %}
+                <li>{{task.title}}</li>
+                <p>{{task.due_date}}</p>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for task in except_low %}
+                <li>{{task.task}}</li>
+                <p>{{task.priority}}</p>
+            {% endfor %}
+        </ul>
+        <p>
+            {{ count_project }}
+            {{count_employee.total}}
+        </p>
     </main>
 </body>
 </html>
