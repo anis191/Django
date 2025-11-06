@@ -86,25 +86,25 @@ WSGI_APPLICATION = 'task_management.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # For SQLite:
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# For Postgres:
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default=''),
-        'USER': config('DB_USER', default=''),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', cast=int)
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+#  
+# For Postgres:
+# DATABASES = {
+    # 'default': {
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': config('DB_NAME', default=''),
+        # 'USER': config('DB_USER', default=''),
+        # 'PASSWORD': config('DB_PASSWORD', default=''),
+        # 'HOST': config('DB_HOST', default='localhost'),
+        # 'PORT': config('DB_PORT', cast=int)
+    # }
+# }
+# 
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -162,5 +162,5 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Your email password (Use 
 # For user activation signal activation_url:
 FRONTEND_URL = 'http://127.0.0.1:8000'
 LOGIN_URL = '/user/sign-in/'
-LOGIN_REDIRECT_URL = '/users/admin/dashboard/'
+LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = '/'

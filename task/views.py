@@ -11,7 +11,8 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic.base import ContextMixin
-from django.views.generic import ListView, DetailView, UpdateView
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 
 # CBV view practice:
 class Greetings(View):
@@ -185,7 +186,7 @@ class UpdateTask(UpdateView):
             messages.success(request ,"Task Update Successfully!")
             return redirect('update-task', self.object.id)
         return redirect('update-task', self.object.id)
-
+'''
 @login_required
 @permission_required("task.delete_task", login_url='no-permission')
 def delete_task(request, id):
@@ -195,6 +196,14 @@ def delete_task(request, id):
         task.delete()
         messages.success(request ,"Task Delete Successfully!")
         return redirect('manager-dashboard')
+'''
+class DeleteTask(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'task.delete_task'
+    model = Task
+    success_url = reverse_lazy('manager-dashboard')
+    pk_url_kwarg = 'id'
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request ,"Task Delete Successfully!")
 
 view_task_decorators = [login_required, permission_required("task.view_task",login_url='no-permission')]
 @method_decorator(view_task_decorators, name="dispatch")

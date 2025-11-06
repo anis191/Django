@@ -1,57 +1,59 @@
 import os
 import django
-from faker import Faker
 import random
-from task.models import Employee, Project, Task, TaskDetail
+from datetime import datetime, timedelta
 
-# Set up Django environment
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'task_management.settings')
+# Setup Django environment BEFORE importing models
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "task_management.settings")
 django.setup()
 
-# Function to populate the database
+from task.models import CustomUser, Task, TaskDetail, Project
 
-def populate_db():
-    # Initialize Faker
-    fake = Faker()
+def populate():
+    # Ensure projects exist before assigning them to tasks
+    if not Project.objects.exists():
+        print("No projects found! Please add at least one project before running this script.")
+        return
 
-    # Create Projects
-    projects = [Project.objects.create(
-        name=fake.bs().capitalize(),
-        description=fake.paragraph(),
-        start_date=fake.date_this_year()
-    ) for _ in range(5)]
-    print(f"Created {len(projects)} projects.")
-
-    # Create Employees
-    employees = [Employee.objects.create(
-        name=fake.name(),
-        email=fake.email()
-    ) for _ in range(10)]
-    print(f"Created {len(employees)} employees.")
-
-    # Create Tasks
+    project = Project.objects.first()  # Assign tasks to the first project
+    
+    # Fetch all users to assign tasks
+    users = list(CustomUser.objects.all())
+    if not users:
+        print("No users found! Please add users before running this script.")
+        return
+    
+    # Task Titles & Descriptions
+    task_titles = ["Fix Bug #123", "Implement Authentication", "Refactor API Endpoints", "Optimize Database Queries"]
+    descriptions = ["Fixing a critical bug.", "Adding JWT authentication.", "Improving code structure.", "Enhancing query performance."]
+    statuses = ["Pending", "In Progress", "Completed"]
+    
+    # Creating tasks
     tasks = []
-    for _ in range(20):
+    for i in range(10):  # Creating 10 tasks
         task = Task.objects.create(
-            project=random.choice(projects),
-            title=fake.sentence(),
-            description=fake.paragraph(),
-            due_date=fake.date_this_year(),
-            status=random.choice(['PENDING', 'IN_PROGRESS', 'COMPLETED']),
-            is_completed=random.choice([True, False])
+            title=random.choice(task_titles),
+            description=random.choice(descriptions),
+            project=project,
+            status=random.choice(statuses),
+            due_date=datetime.now() + timedelta(days=random.randint(1, 30))
         )
-        task.assign_to.set(random.sample(employees, random.randint(1, 3)))
-        tasks.append(task)
-    print(f"Created {len(tasks)} tasks.")
 
-    # Create Task Details
+        # ✅ Correct way to assign ManyToManyField
+        assigned_users = random.sample(users, random.randint(1, min(3, len(users))))  # Assign 1-3 users
+        task.assigned_to.set(assigned_users)  # Correct way
+
+        tasks.append(task)
+    
+    # Creating task details
     for task in tasks:
         TaskDetail.objects.create(
             task=task,
-            assign_to=", ".join(
-                [emp.name for emp in task.assign_to.all()]),
-            priority=random.choice(['H', 'M', 'L']),
-            notes=fake.paragraph()
+            additional_info=f"Details for {task.title}",
+            created_at=datetime.now()
         )
-    print("Populated TaskDetails for all tasks.")
-    print("Database populated successfully!")
+    
+    print("✅ Database population completed successfully!")
+
+if __name__ == "__main__":
+    populate()
